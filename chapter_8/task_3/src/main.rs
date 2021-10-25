@@ -10,16 +10,13 @@ fn main() {
             .read_line(&mut command)
             .expect("Failed to read line");
 
-        let command_parsed = match command.trim() {
-            Some(text) => text,
-            None => {println!("Empty word, try again"); None},
-        };
+        let command_parsed = command.trim();
 
         match command_parsed {
             "add" => add_employee(&mut register),
-            //"dep" => print_departemnt(&mut register),
+            "dep" => print_departemnt(&mut register),
             "comp" => print_company(&mut register),
-            other => {println!("Unknown command {}, try agaen", command.as_str()); continue},
+            _ => {println!("Unknown command {}, try agaen", command.trim()); continue},
         }
 
     }
@@ -39,12 +36,12 @@ fn add_employee(register: &mut HashMap<String, Vec<String>>) {
         .read_line(&mut department)
         .expect("Failed to read line");
 
-    let name_vector = register.entry(department.clone()).or_insert(vec!(name.clone()));
-    name_vector.push(name.clone());
+    let name_vector = register.entry(department.trim().to_string()).or_insert(vec!());
+    name_vector.push(name.trim().to_string());
 
 }
 
-fn print_company(register : &mut HashMap<String, Vec<String>>) {
+fn print_departemnt(register : &mut HashMap<String, Vec<String>>) {
     let mut department = String::new();
 
     println!("Department to list:");
@@ -52,10 +49,16 @@ fn print_company(register : &mut HashMap<String, Vec<String>>) {
         .read_line(&mut department)
         .expect("Failed to read line");
 
-    let people = match register.get(department.as_str()) {
+    let department = department.trim();
+
+    let people = match register.get(department) {
         Some(people) => people,
         None => {println!("Department not found"); return},
     };
 
-    println!("{}{:?}", department, people);
+    println!("{}: {:?}", department, people);
+}
+
+fn print_company(register : &mut HashMap<String, Vec<String>>) {
+    println!("Company: {:?}", register);
 }
