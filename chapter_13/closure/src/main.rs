@@ -1,5 +1,6 @@
 use std::thread;
 use std::time::Duration;
+use std::collections::HashMap;
 
 fn _simulated_expencive_calculation(intensity: u32) -> u32 {
     println!("calculating slowly...");
@@ -12,7 +13,7 @@ where
     T: Fn(u32) -> u32,
 {
     calculation: T,
-    value: Option<u32>,
+    value: HashMap<u32, u32>,
 }
 
 impl<T> Cacher<T>
@@ -22,18 +23,18 @@ where
     fn new(calculation: T) -> Cacher<T> {
         Cacher {
             calculation,
-            value: None,
+            value: HashMap::new(),
         }
     }
 
     fn value(&mut self, arg: u32) -> u32 {
-        match self.value {
-            Some(v) => v,
-            None => {
-                let v = (self.calculation)(arg);
-                self.value = Some(v);
-                v
-            }
+        match self.value.get(&arg) {
+                Some(v) => *v,
+                None => {
+                    let v = (self.calculation)(arg);
+                    self.value.insert(arg, v);
+                    v
+                }
         }
     }
 }
