@@ -8,7 +8,6 @@ pub struct DraftPost {
 
 pub struct PendingReviewPost {
     content: String,
-    number_of_approves: i32,
 }
 
 impl Post {
@@ -31,20 +30,14 @@ impl DraftPost {
     pub fn request_review(self) -> PendingReviewPost {
         PendingReviewPost {
             content: self.content,
-            number_of_approves: 0,
         }
     }
 }
 
 impl PendingReviewPost {
-    pub fn approve(mut self) -> Post {
-        self.number_of_approves += 1;
-        if self.number_of_approves == 2 {
-                Post {
-                    content: self.content,
-                }
-        } else {
-            return self
+    pub fn approve(self) -> Post {
+        Post {
+            content: self.content,
         }
     }
 }
